@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import peer.engine.text.TextEngine;
+import peer.engine.file.FileEngine;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -28,6 +29,7 @@ public class ChatEngine {
     Peer user;
     HashMap<String, Peer> peerMap;
     TextEngine tEngine;
+    FileEngine fEngine;
 
     public ChatEngine(String username) {
         peerMap = new HashMap<String, Peer>();
@@ -100,6 +102,25 @@ public class ChatEngine {
         if(this.peerMap.get(username) != null) {
          targetPeer = this.peerMap.get(username);
          tEngine.sendMsg(targetPeer, getMessagePacket(msg));   
+         return true;
+        }
+        else {
+            System.out.println("Peer currently not connected");
+            return false;
+        }
+    }
+    
+    
+    
+    public Boolean sendFile(String username,String pathToFile){      
+        Peer targetPeer = this.peerMap.get(username);
+        if(targetPeer == null) {
+            // Peer details not available
+            this.updatePeerMap();
+        }
+        if(this.peerMap.get(username) != null) {
+         targetPeer = this.peerMap.get(username);
+         fEngine.sendFile(targetPeer, pathToFile);   
          return true;
         }
         else {

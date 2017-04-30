@@ -37,8 +37,7 @@ public class TextEngine {
        System.err.println("about to start the listerning thread");
         new Thread(){
             @Override
-            public void run() {
-                
+            public void run() {                
                 while(true){
                     try{
                         Socket clientSocket = serverSocket.accept();

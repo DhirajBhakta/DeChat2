@@ -47,18 +47,29 @@ public class DeChat {
 class InputListener extends Thread{
     ChatEngine CE;
     
+    
     public InputListener(ChatEngine CE){
       this.CE = CE;
     }
     public void run()
     {  Scanner scan = new Scanner(System.in);
-       String input,username,msg;
+       String input,username,msg,pathToFile;
         while(true){
           input = scan.nextLine();
           String[] list = input.split(":");
-          username = list[0];
-          msg = list[1];
-          CE.sendMsg(username, msg);
+          if(list[0].equals("FILE"))
+          {
+              username   = list[1];
+              pathToFile = list[2];
+              CE.sendFile(username, pathToFile);
+          }
+          else
+          {
+              username = list[0];
+              msg = list[1];
+              CE.sendMsg(username, msg);
+          }
+          
             
        } 
     }
