@@ -34,6 +34,7 @@ public class ChatEngine {
     public ChatEngine(String username) {
         peerMap = new HashMap<String, Peer>();
         tEngine = new TextEngine();
+        tEngine.start();
         // Create an new Peer and assign it to ChatEngine object
         this.user = new Peer(this.getSystemInetAddress(), username);
         // Get other peer details from server
@@ -78,9 +79,14 @@ public class ChatEngine {
             new ObjectOutputStream(sock.getOutputStream()).writeObject(new Query("ALL", this.user));
             // Receive response
             HashMap<String, Peer> recvMap = (HashMap<String, Peer>) new ObjectInputStream(sock.getInputStream()).readObject();
+            System.err.println("Abpout to print recieved map");
+            printMap(recvMap);
             // Update the current map
-            this.peerMap.clear();
-            this.peerMap.putAll(recvMap);
+            //this.peerMap.clear();
+            //this.peerMap.putAll(recvMap);
+            this.peerMap = (HashMap)recvMap.clone();
+            System.err.println("printing updated map");
+            printMap(this.peerMap);
             sock.close();
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(ChatEngine.class.getName()).log(Level.SEVERE, null, ex);
@@ -94,6 +100,7 @@ public class ChatEngine {
             this.updatePeerMap();
         }
         if(this.peerMap.get(username) != null) {
+         targetPeer = this.peerMap.get(username);
          tEngine.sendMsg(targetPeer, msg);   
          return true;
         }
@@ -103,5 +110,14 @@ public class ChatEngine {
         }
     }
 
+    
+    public static void printMap(Map mp) {
+    Iterator it = mp.entrySet().iterator();
+    while (it.hasNext()) {
+        Map.Entry pair = (Map.Entry)it.next();
+        System.out.println(pair.getKey() + " = " + pair.getValue());
+        //it.remove(); // avoids a ConcurrentModificationException
+    }
+}
  
 }

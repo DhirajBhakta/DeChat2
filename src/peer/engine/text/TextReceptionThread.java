@@ -24,9 +24,13 @@ public class TextReceptionThread extends Thread {
     
     public TextReceptionThread(Socket clientSocket){
         this.clientsocket = clientSocket;
+        System.err.println("recieved a new request....in TestReceptionThread");
+
     }
     
     public void run(){
+        System.err.println("inside RUN() of TextReceptionThread.()");
+
         inp  = null;
         binp = null;
         msg = null;
@@ -42,6 +46,8 @@ public class TextReceptionThread extends Thread {
             try{
                 //get recieved msg
                 msg = binp.readLine();
+                System.err.println("recieved a new MESSAGE!!!!YAY");
+
                 //dump this msg assoiating it to who sent it , in DB maybe
                 
                 //WHen the user at the other end deliberately sends a message to serverscoket of some other peer ,then force him to send

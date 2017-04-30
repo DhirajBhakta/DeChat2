@@ -17,8 +17,10 @@ public class DeChat {
      * @param args the command line arguments
      */
        public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String option = sc.nextLine();
         
-        if(args[0].equals("SERVER")){
+        if(option.equals("SERVER")){
            RendezousServer.startServer();
         }
         else{
@@ -42,7 +44,7 @@ public class DeChat {
 
 
 
-public class InputListener extends Thread{
+class InputListener extends Thread{
     ChatEngine CE;
     
     public InputListener(ChatEngine CE){
@@ -50,7 +52,7 @@ public class InputListener extends Thread{
     }
     public void run()
     {  Scanner scan = new Scanner(System.in);
-       String msg_to_send;
+       String input,username,msg;
         while(true){
           input = scan.nextLine();
           String[] list = input.split(":");

@@ -9,7 +9,6 @@ import java.io.*;
 import java.net.*;
 import common.Constants;
 import common.Peer;
-import java.util.HashMap;
 
 /**
  *
@@ -34,15 +33,24 @@ public class TextEngine {
     
     //starts listening 
     public void start(){
-        while(true){
-            try{
-                Socket clientSocket = serverSocket.accept();
-                new TextReceptionThread(clientSocket).start();
-            }catch(IOException ioe){
-                System.err.println("ERROR: TextEngine , start().");
-                ioe.printStackTrace();
-            }
-        }
+       System.err.println("about to start the listerning thread");
+        new Thread(){
+            @Override
+            public void run() {
+                
+                while(true){
+                    try{
+                        Socket clientSocket = serverSocket.accept();
+                        System.err.println("recieved a new request");
+                        new TextReceptionThread(clientSocket).start();
+                       }
+                    catch(IOException ioe){
+                        System.err.println("ERROR: TextEngine , start().");
+                        ioe.printStackTrace();
+                       }
+                }
+            }                       
+        }.start();   
     }
     
     public void sendMsg(Peer destPeer, String msg){
@@ -99,4 +107,3 @@ public class TextEngine {
 
 //ONLY meant for getting the messages....
 
-    
