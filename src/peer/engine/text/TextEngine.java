@@ -7,8 +7,7 @@ package peer.engine.text;
 
 import java.io.*;
 import java.net.*;
-import common.Constants;
-import common.Peer;
+import common.*;
 
 /**
  *
@@ -17,7 +16,7 @@ import common.Peer;
 public class TextEngine {
     ServerSocket serverSocket;//forever listening on 8888
     Socket selfSocket; //only WRITE to here
-    DataOutputStream out;
+    PrintWriter out;
     Peer currentState;
     
     public TextEngine() {
@@ -53,12 +52,12 @@ public class TextEngine {
         }.start();   
     }
     
-    public void sendMsg(Peer destPeer, String msg){
+    public void sendMsg(Peer destPeer, Message msgPkt){
         //Close previous state connection
         if(this.currentState!=null && !this.currentState.equals(destPeer)){
             try{
                 out.flush();
-                out.writeUTF("END");//signalling the old peer to close the TCP connection.
+                out.println("END");//signalling the old peer to close the TCP connection.
                 out.flush();
                 out.close();
                 selfSocket.close();
@@ -72,22 +71,18 @@ public class TextEngine {
             currentState = destPeer;
             try{
                  selfSocket = new Socket(destPeer.ip, Constants.TEXT_SERVER_PORT);
-                 out=new DataOutputStream(selfSocket.getOutputStream());  
+                 out=new PrintWriter(selfSocket.getOutputStream(),true);  
 
             }catch(Exception e){
                 System.err.println("ERROR: TextEngine sendMsg() . while creating new currentstate");
                 e.printStackTrace();
             }
         }
-        try{
-           out.writeUTF(msg);
+        
+           out.println(msgPkt);
            //dump this message associating it to whom it was sent., maybe in DB
            out.flush();
-        }catch(IOException ioe){
-           System.err.println("ERROR: TextEngine sendMsg(). while writing to DataOutput Stream.");
-           ioe.printStackTrace();
-        }
-            
+      
         
         
     }

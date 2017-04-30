@@ -5,9 +5,7 @@
  */
 package peer;
 
-import common.Constants;
-import common.Peer;
-import common.Query;
+import common.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -101,7 +99,7 @@ public class ChatEngine {
         }
         if(this.peerMap.get(username) != null) {
          targetPeer = this.peerMap.get(username);
-         tEngine.sendMsg(targetPeer, msg);   
+         tEngine.sendMsg(targetPeer, getMessagePacket(msg));   
          return true;
         }
         else {
@@ -110,6 +108,10 @@ public class ChatEngine {
         }
     }
 
+    public Message getMessagePacket(String msg){
+        Message msgPkt = new Message(this.user.username,msg);
+        return msgPkt;
+    }
     
     public static void printMap(Map mp) {
     Iterator it = mp.entrySet().iterator();

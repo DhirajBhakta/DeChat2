@@ -5,10 +5,13 @@
  */
 package peer.engine.text;
 
+import common.Message;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 
 /**
@@ -19,6 +22,7 @@ public class TextReceptionThread extends Thread {
     protected Socket clientsocket;
     InputStream inp;
     BufferedReader binp;
+    ObjectInputStream objReader;
     String msg;
     
     
@@ -36,7 +40,8 @@ public class TextReceptionThread extends Thread {
         msg = null;
         try{
             inp = clientsocket.getInputStream();
-            binp = new BufferedReader(new InputStreamReader(inp));
+          //  binp = new BufferedReader(new InputStreamReader(inp));
+            objReader = new ObjectInputStream(inp);
         }catch(IOException ioe){
             System.err.println("ERROR: While MsgReceptionThread run()");
             ioe.printStackTrace();
@@ -45,22 +50,22 @@ public class TextReceptionThread extends Thread {
         while(true){
             try{
                 //get recieved msg
-                msg = binp.readLine();
+                Message msgPkt = (Message)objReader.readObject();
                 System.err.println("recieved a new MESSAGE!!!!YAY");
 
                 //dump this msg assoiating it to who sent it , in DB maybe
                 
                 //WHen the user at the other end deliberately sends a message to serverscoket of some other peer ,then force him to send
                 //"END" message to this peer ,so that this guy's TCP connection can be closed.
-                if(msg.equals("END")){
+               /* if(msg.equals("END")){
                     binp.close();
                     inp.close();
                     clientsocket.close();                    
                     return;
-                }
-                System.out.println("message recieved:"+msg);
+                }*/
+                System.out.println("message recieved:"+msgPkt.getUsername()+" SAYS:"+msgPkt.getMsg());
                 
-            }catch(IOException ioe){
+            }catch(Exception ioe){
                 System.err.println("ERROR: while recieving messages.MsgReceptionThread  ");
             }
         }
