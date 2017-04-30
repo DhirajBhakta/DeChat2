@@ -6,6 +6,7 @@
 package peer;
 
 import common.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,6 +17,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +37,9 @@ public class ChatEngine {
     public ChatEngine(String username) {
         peerMap = new HashMap<String, Peer>();
         tEngine = new TextEngine();
+        fEngine = new FileEngine();
         tEngine.start();
+        fEngine.start();
         // Create an new Peer and assign it to ChatEngine object
         this.user = new Peer(this.getSystemInetAddress(), username);
         // Get other peer details from server
@@ -120,7 +125,21 @@ public class ChatEngine {
         }
         if(this.peerMap.get(username) != null) {
          targetPeer = this.peerMap.get(username);
+         Path p = Paths.get(pathToFile);
+         File file = p.toFile();
+         if(file.exists()){
+             System.err.println("File exists");
+         }
+         else{
+             System.err.println("File not there");
+         }
+         
+         try{
          fEngine.sendFile(targetPeer, pathToFile);   
+         }catch(Exception e){
+             e.printStackTrace();
+         }
+         
          return true;
         }
         else {

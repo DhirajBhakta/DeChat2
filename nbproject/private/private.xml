@@ -3,11 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/root/NetBeansProjects/DeChat/src/dechat/TextEngine.java</file>
-            <file>file:/root/NetBeansProjects/DeChat/src/constants/Constants.java</file>
-            <file>file:/root/NetBeansProjects/DeChat/src/dechat/ChatEngine.java</file>
-            <file>file:/root/NetBeansProjects/DeChat/src/dechat/DeChat.java</file>
-            <file>file:/root/NetBeansProjects/DeChat/src/dechat/Peer.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/server/RendezousServer.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/common/Message.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/common/Constants.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/common/Peer.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/server/RendezvousThread.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/peer/DeChat.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/peer/ChatEngine.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/peer/engine/text/TextReceptionThread.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/peer/engine/file/FileReceptionThread.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/common/Query.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/peer/engine/text/TextEngine.java</file>
+            <file>file:/root/NetBeansProjects/DeChat/src/peer/engine/file/FileEngine.java</file>
         </group>
     </open-files>
 </project-private>

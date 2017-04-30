@@ -44,6 +44,7 @@ public class FileReceptionThread  extends Thread{
             while(inp.read(buffer)!=-1)
             {
              fos.write(buffer);
+                System.err.println("byte recieved..");
             }
             fos.close();
             inp.close();

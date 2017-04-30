@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import peer.engine.text.TextReceptionThread;
@@ -50,7 +52,7 @@ public class FileEngine {
     
     //--Start Listening 
     public void start(){
-        System.err.println("about to start the listerning thread");
+        System.err.println("about to start the FILE  listerning thread");
         new Thread(){
             @Override
             public void run() {                
@@ -72,7 +74,8 @@ public class FileEngine {
     
     
     public Boolean sendFile(Peer destPeer,String pathToFile){
-        File fileToSend = new File(pathToFile);
+        Path path = Paths.get(pathToFile);
+        File fileToSend = path.toFile();
         if(!fileToSend.exists())
         {
             return false;
@@ -93,6 +96,7 @@ public class FileEngine {
             while(fis.read(buffer)!=-1)
             {
                 out.write(buffer, 0, buffer.length);
+                System.err.println("Byte sent...-->");
                 out.flush();
             }
             //---file tranfser done----
