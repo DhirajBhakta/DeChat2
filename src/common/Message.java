@@ -5,11 +5,13 @@
  */
 package common;
 
+import java.io.Serializable;
+
 /**
  *
  * @author root
  */
-public class Message {
+public class Message implements Serializable {
     private String username;
     private String msg;
 

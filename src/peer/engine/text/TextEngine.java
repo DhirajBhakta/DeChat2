@@ -8,6 +8,8 @@ package peer.engine.text;
 import java.io.*;
 import java.net.*;
 import common.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,7 +18,7 @@ import common.*;
 public class TextEngine {
     ServerSocket serverSocket;//forever listening on 8888
     Socket selfSocket; //only WRITE to here
-    PrintWriter out;
+    ObjectOutputStream out;
     Peer currentState;
     
     public TextEngine() {
@@ -57,7 +59,7 @@ public class TextEngine {
         if(this.currentState!=null && !this.currentState.equals(destPeer)){
             try{
                 out.flush();
-                out.println("END");//signalling the old peer to close the TCP connection.
+                out.writeObject("END");//signalling the old peer to close the TCP connection.
                 out.flush();
                 out.close();
                 selfSocket.close();
@@ -71,7 +73,7 @@ public class TextEngine {
             currentState = destPeer;
             try{
                  selfSocket = new Socket(destPeer.ip, Constants.TEXT_SERVER_PORT);
-                 out=new PrintWriter(selfSocket.getOutputStream(),true);  
+                 out=new ObjectOutputStream(selfSocket.getOutputStream());  
 
             }catch(Exception e){
                 System.err.println("ERROR: TextEngine sendMsg() . while creating new currentstate");
@@ -79,9 +81,14 @@ public class TextEngine {
             }
         }
         
-           out.println(msgPkt);
+        try {
+            out.writeObject(msgPkt);
+            out.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(TextEngine.class.getName()).log(Level.SEVERE, null, ex);
+        }
            //dump this message associating it to whom it was sent., maybe in DB
-           out.flush();
+           
       
         
         
