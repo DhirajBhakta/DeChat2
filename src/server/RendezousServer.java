@@ -34,7 +34,7 @@ public class RendezousServer {
             while (true) {
                 Socket csock = serverSocket.accept();
                 System.out.println("Client connected from address " + csock.getInetAddress().getHostAddress());
-                new RendezvousThread(csock, mainPeerMap);                
+                new RendezvousThread(csock, mainPeerMap).start();                
             }
 
         } catch (IOException ex) {
@@ -42,9 +42,4 @@ public class RendezousServer {
         }
 
     }
-
-    public static void main(String[] args) {
-        startServer();
-    }
-
 }

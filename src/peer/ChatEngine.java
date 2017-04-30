@@ -103,14 +103,5 @@ public class ChatEngine {
         }
     }
 
-    public static void main(String[] args) {
-        String username;
-
-        // Temporary reading of username; will be done via GUI later
-        System.out.print("Enter username? ");
-        username = new Scanner(System.in).nextLine();
-
-        // Instantiate ChatEngine object
-        ChatEngine chatEngine = new ChatEngine(username);
-    }
+ 
 }

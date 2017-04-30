@@ -5,6 +5,8 @@
  */
 package peer;
 
+import java.util.Scanner;
+import server.RendezousServer;
 /**
  *
  * @author root
@@ -14,8 +16,48 @@ public class DeChat {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+       public static void main(String[] args) {
+        
+        if(args[0].equals("SERVER")){
+           RendezousServer.startServer();
+        }
+        else{
+        String username;
+        // Temporary reading of username; will be done via GUI later
+        System.out.print("Enter username? ");
+        username = new Scanner(System.in).nextLine();
+
+        // Instantiate ChatEngine object
+        ChatEngine chatEngine = new ChatEngine(username);
+        
+        
+        
+        //WARNING--dirty -test code ahead....:( :( :(
+        new InputListener(chatEngine).start();
+        }
     }
     
+}
+
+
+
+
+public class InputListener extends Thread{
+    ChatEngine CE;
+    
+    public InputListener(ChatEngine CE){
+      this.CE = CE;
+    }
+    public void run()
+    {  Scanner scan = new Scanner(System.in);
+       String msg_to_send;
+        while(true){
+          input = scan.nextLine();
+          String[] list = input.split(":");
+          username = list[0];
+          msg = list[1];
+          CE.sendMsg(username, msg);
+            
+       } 
+    }
 }

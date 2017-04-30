@@ -27,7 +27,9 @@ public class RendezvousThread extends Thread {
     public RendezvousThread(Socket csock, HashMap<String, Peer> peerMap) {
         this.csock = csock;
         this.peerMap = peerMap;
-
+    }
+    
+    public void run(){
         try {
             // Get the query
             Query query = (Query) new ObjectInputStream(csock.getInputStream()).readObject();
