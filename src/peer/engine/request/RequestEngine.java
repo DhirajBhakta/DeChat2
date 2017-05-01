@@ -17,6 +17,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import peer.engine.file.FileReceptionThread;
@@ -73,6 +74,28 @@ public class RequestEngine {
         }catch(Exception e){
             e.printStackTrace();
         }         
+    }
+    
+    /*
+    Multicast Group object to all members in group
+    */
+    public void sendGroupObject(Group group){
+        ArrayList<Peer> memberList = group.getMemberList();
+        Socket sendSock;
+        for(Peer member:memberList){
+            try {
+                sendSock = new Socket(member.ip,Constants.MISC_TCP_SERVER_PORT);
+                ObjectOutputStream tempout = new ObjectOutputStream(sendSock.getOutputStream());
+                tempout.writeObject(new Message("GROUP_OBJECT"));
+                tempout.flush();
+                tempout.writeObject(new ReliableData("GROUP_OBJECT",group));
+                tempout.flush();
+                tempout.close();
+                
+            } catch (IOException ex) {
+                Logger.getLogger(RequestEngine.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
         
     

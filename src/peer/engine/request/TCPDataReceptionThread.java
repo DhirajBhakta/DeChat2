@@ -48,6 +48,10 @@ public class TCPDataReceptionThread extends Thread{
                                         CE.setUptodatePeer(newUptodatePeer);
                                       }
                                  }
+                case "GROUP_MEMBER_LIST":{
+                                            Group recvdGroup = (Group)recvdData.getData();
+                                            CE.addToGroupMap(recvdGroup);
+                                         }
                 
             }
             inp.close();

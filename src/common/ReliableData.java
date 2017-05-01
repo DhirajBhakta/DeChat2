@@ -14,7 +14,7 @@ public class ReliableData {
     private Object data;
     
     /*
-    type: "TIMESTAMP", "PEERMAP"
+    type: "TIMESTAMP", "PEERMAP", "GROUP_OBJECT"
     */
     public ReliableData(String type,Object data){
         this.type = type;

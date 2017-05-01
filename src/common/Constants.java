@@ -20,5 +20,6 @@ public class Constants {
     public static final String SEND_MESSAGE = "SENT";
     public static final String RECIEVE_MESSAGE = "RECIEVED";
     public static final String DEFAULT_MSG_STRING = "Hello there.";
+    public static final String DEFAULT_GROUP_NAME = "NONE";
 
 }

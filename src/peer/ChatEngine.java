@@ -36,7 +36,8 @@ public class ChatEngine {
     Peer user;
     Peer uptodatePeer; //Peer who has most recenty contacted the rendezvous server.
     
-    HashMap<String, Peer> peerMap;
+    HashMap<String, Peer> peerMap;  
+    HashMap<String, Group> groupMap;//Map of all groups the user is registered to 
     TextEngine tEngine;
     FileEngine fEngine;
     RequestEngine rEngine;
@@ -44,6 +45,7 @@ public class ChatEngine {
     public ChatEngine(String username) {
         uptodatePeer = null;
         peerMap = new HashMap<String, Peer>();
+        groupMap = new HashMap<String,Group>();
         tEngine = new TextEngine();
         fEngine = new FileEngine();
         rEngine = new RequestEngine(this);
@@ -228,6 +230,11 @@ public class ChatEngine {
         return msgPkt;
     }
     
+    public Message getGroupMessagePacket(String msg,String groupName){
+        Message msgPkt = new Message(this.user.username,msg,groupName);
+        return msgPkt;
+    }
+    
     public static void printMap(Map mp) {
     Iterator it = mp.entrySet().iterator();
     while (it.hasNext()) {
@@ -263,5 +270,35 @@ public class ChatEngine {
     public void setUptodatePeer(Peer newUptodatePeer){
         uptodatePeer = newUptodatePeer;
     }
- 
+    
+    //**********************GroupChat**********************
+    public void createGroup(String groupName){
+        Group newGroup = new Group(groupName);
+        newGroup.addMember(user);
+        groupMap.put(groupName, newGroup);        
+    }
+    public void addMemberToGroup(Peer newMember, String groupName){
+        groupMap.get(groupName).addMember(newMember);
+    }
+    /*
+    first, this user creates a group,..then adds members one by one (addMemberToGroup())
+    after all members have been selected, he clicks OK.
+    Then invite() distributes the member list of this group to all members in the group
+    */
+    public void invite(String groupName){
+     rEngine.sendGroupObject(groupMap.get(groupName));
+    }
+    
+    public void addToGroupMap(Group newGroup){
+        groupMap.put(newGroup.getGroupName(), newGroup);
+    }
+    
+    
+    public void sendMsgToGroup(String msg, String groupName){
+        ArrayList<Peer> memberList = groupMap.get(groupName).getMemberList();
+        Message grpMsgPkt = getGroupMessagePacket(msg, groupName);
+        for(Peer member:memberList){
+            tEngine.sendMsg(member, grpMsgPkt);
+        }
+    }
 }

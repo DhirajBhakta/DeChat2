@@ -96,8 +96,15 @@ public class TextReceptionThread extends Thread {
                     clientsocket.close();                    
                     return;
                 }*/
-                System.out.println("message recieved:"+msgPkt.getUsername()+" SAYS:"+msgPkt.getMsg());
-                logmessage(msgPkt.getUsername(), msgPkt.getMsg(), Constants.RECIEVE_MESSAGE);
+               if(msgPkt.getGroupName().equals(Constants.DEFAULT_GROUP_NAME)){
+                   //This is one-to-one chat
+                   System.out.println("message recieved:"+msgPkt.getUsername()+" SAYS:"+msgPkt.getMsg());
+                   logmessage(msgPkt.getUsername(), msgPkt.getMsg(), Constants.RECIEVE_MESSAGE);
+               }
+               else{
+                   //This is GROUP CHAT message
+                   System.out.println("GROUP MSG RECIEVED: ::GROUP_NAME:"+msgPkt.getGroupName()+"     ::BY:+"+msgPkt.getUsername()+"      "+msgPkt.getMsg());
+               }
             }catch(Exception ioe){
                 System.err.println("ERROR: while recieving messages.MsgReceptionThread  ");
             }
