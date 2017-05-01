@@ -5,14 +5,19 @@
  */
 package peer.engine.text;
 
+import common.Constants;
 import common.Message;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -30,6 +35,34 @@ public class TextReceptionThread extends Thread {
         this.clientsocket = clientSocket;
         System.err.println("recieved a new request....in TestReceptionThread");
 
+    }
+     private void logmessage(String username, String msg,String type) {
+        String filename = username+".txt";
+        String data=type+":"+username+":"+msg+":"+LocalDateTime.now().toString();
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+
+        try {
+            File file = new File(filename);
+            if (!file.exists()) {
+                    file.createNewFile();
+            }
+            fw = new FileWriter(file.getAbsoluteFile(), true);
+            bw = new BufferedWriter(fw);
+            bw.write(data);
+            System.out.println("Logged Message");
+        } catch (IOException e) {
+                e.printStackTrace();
+        } finally {
+            try {
+                if (bw != null)
+                        bw.close();
+                if (fw != null)
+                        fw.close();
+            } catch (IOException ex) {
+                    ex.printStackTrace();
+            }
+        }
     }
     
     public void run(){
@@ -64,7 +97,7 @@ public class TextReceptionThread extends Thread {
                     return;
                 }*/
                 System.out.println("message recieved:"+msgPkt.getUsername()+" SAYS:"+msgPkt.getMsg());
-                
+                logmessage(msgPkt.getUsername(), msgPkt.getMsg(), Constants.RECIEVE_MESSAGE);
             }catch(Exception ioe){
                 System.err.println("ERROR: while recieving messages.MsgReceptionThread  ");
             }

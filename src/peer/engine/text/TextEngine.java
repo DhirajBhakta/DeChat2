@@ -53,7 +53,7 @@ public class TextEngine {
         }.start();   
     }
     
-    public void sendMsg(Peer destPeer, Message msgPkt){
+    public Boolean sendMsg(Peer destPeer, Message msgPkt){
         //Close previous state connection
         if(this.currentState!=null && !this.currentState.equals(destPeer)){
             try{
@@ -73,7 +73,6 @@ public class TextEngine {
             try{
                  selfSocket = new Socket(destPeer.ip, Constants.TEXT_SERVER_PORT);
                  out=new ObjectOutputStream(selfSocket.getOutputStream());  
-
             }catch(Exception e){
                 System.err.println("ERROR: TextEngine sendMsg() . while creating new currentstate");
                 e.printStackTrace();
@@ -81,18 +80,15 @@ public class TextEngine {
         }
         
         try {
-            out.writeObject(msgPkt);
+            out.writeObject(msgPkt);          
             out.flush();
+            return true;
         } catch (IOException ex) {
             Logger.getLogger(TextEngine.class.getName()).log(Level.SEVERE, null, ex);
         }
-           //dump this message associating it to whom it was sent., maybe in DB
-           
-      
-        
-        
+        return false;
+           //dump this message associating it to whom it was sent., maybe in DB   
     }
-    
 }
 
 

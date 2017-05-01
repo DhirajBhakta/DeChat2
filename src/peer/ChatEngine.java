@@ -6,7 +6,9 @@
 package peer;
 
 import common.*;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,6 +22,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -120,16 +123,46 @@ public class ChatEngine {
         }
         if(this.peerMap.get(username) != null) {
          targetPeer = this.peerMap.get(username);
-         tEngine.sendMsg(targetPeer, getMessagePacket(msg));   
-         return true;
+         Boolean sent = tEngine.sendMsg(targetPeer, getMessagePacket(msg));   
+         if (sent==true){
+             logmessage(username,msg);
+             return true;
+         }
+         return false;
         }
         else {
             System.out.println("Peer currently not connected");
             return false;
         }
     }
-    
-    
+    private void logmessage(String username, String msg) {
+        String filename = username+".txt";
+        String data="sent"+":"+username+":"+msg+":"+LocalDateTime.now().toString();
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+
+        try {
+            File file = new File(filename);
+            if (!file.exists()) {
+                    file.createNewFile();
+            }
+            fw = new FileWriter(file.getAbsoluteFile(), true);
+            bw = new BufferedWriter(fw);
+            bw.write(data);
+            System.out.println("Logged Message");
+        } catch (IOException e) {
+                e.printStackTrace();
+        } finally {
+            try {
+                if (bw != null)
+                        bw.close();
+                if (fw != null)
+                        fw.close();
+            } catch (IOException ex) {
+                    ex.printStackTrace();
+            }
+        }
+    }
     
     public Boolean sendFile(String username,String pathToFile){      
         Peer targetPeer = this.peerMap.get(username);
@@ -175,5 +208,7 @@ public class ChatEngine {
         //it.remove(); // avoids a ConcurrentModificationException
     }
 }
+
+   
  
 }
