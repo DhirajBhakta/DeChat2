@@ -15,6 +15,11 @@ public class Message implements Serializable {
     private String username;
     private String msg;
 
+    public Message(String username){
+        this.username = username;
+        this.msg = Constants.DEFAULT_MSG_STRING;
+    }
+    
     public Message(String username, String msg) {
         this.username = username;
         this.msg = msg;

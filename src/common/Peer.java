@@ -16,10 +16,18 @@ import java.util.Objects;
 public class Peer implements Serializable {
     public String ip;
     public String username;
+    private long TIMESTAMP; //of last access to rendezvuos server
     
     public Peer(String ip, String username){
         this.ip   = ip;
         this.username = username;
+        TIMESTAMP = (long)0.00;
+    }
+    public void updateTIMESTAMP(long newTS){
+        TIMESTAMP = newTS;
+    }
+    public long getTIMESTAMP(){
+        return TIMESTAMP;
     }
 
     @Override

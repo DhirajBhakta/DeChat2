@@ -14,9 +14,11 @@ public class Constants {
     public static final int RENDEZOUS_SERVER_PORT = 33000;
     public static final int TEXT_SERVER_PORT = 33001;
     public static final int FILE_SERVER_PORT = 33002;
+    public static final int MISC_TCP_SERVER_PORT = 33007;
     public static final int MISC_UDP_RECV_PORT = 33008;
     public static final int MISC_UDP_SEND_PORT = 33009;
     public static final String SEND_MESSAGE = "SENT";
     public static final String RECIEVE_MESSAGE = "RECIEVED";
+    public static final String DEFAULT_MSG_STRING = "Hello there.";
 
 }

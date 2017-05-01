@@ -34,14 +34,15 @@ import java.util.logging.Logger;
 public class ChatEngine {
 
     Peer user;
-    long TIMESTAMP; // of last access to Rendezvous Server
+    Peer uptodatePeer; //Peer who has most recenty contacted the rendezvous server.
+    
     HashMap<String, Peer> peerMap;
     TextEngine tEngine;
     FileEngine fEngine;
     RequestEngine rEngine;
     
     public ChatEngine(String username) {
-        TIMESTAMP = (long)0.00;
+        uptodatePeer = null;
         peerMap = new HashMap<String, Peer>();
         tEngine = new TextEngine();
         fEngine = new FileEngine();
@@ -52,7 +53,7 @@ public class ChatEngine {
         // Create an new Peer and assign it to ChatEngine object
         this.user = new Peer(this.getSystemInetAddress(), username);
         // Get other peer details from server
-        this.updatePeerMap();
+        this.requestPeerMapFromServer();
     }
 
     private String getSystemInetAddress() {
@@ -86,7 +87,10 @@ public class ChatEngine {
         return ip;
     }
 
-    public void updatePeerMap() {
+    /*
+    update from RENDEZVOUS SERVER
+    */
+    public void requestPeerMapFromServer() {
         try {
             
             Socket sock = new Socket(Constants.RENDEZOUS_SERVER_ADDRESS, Constants.RENDEZOUS_SERVER_PORT);
@@ -97,14 +101,14 @@ public class ChatEngine {
             t_out.flush();
             // Receive response
             HashMap<String, Peer> recvMap = (HashMap<String, Peer>)t_in.readObject();
-            TIMESTAMP =(long)t_in.readLong();
+            user.updateTIMESTAMP((long)t_in.readLong());
             
             System.err.println("Abpout to print recieved map");
             printMap(recvMap);
             // Update the current map
             //this.peerMap.clear();
             //this.peerMap.putAll(recvMap);
-            this.peerMap = (HashMap)recvMap.clone();
+            replacePeerMap(recvMap);
             System.err.println("printing updated map");
             printMap(this.peerMap);
             t_out.close();
@@ -119,7 +123,7 @@ public class ChatEngine {
         Peer targetPeer = this.peerMap.get(username);
         if(targetPeer == null) {
             // Peer details not available
-            this.updatePeerMap();
+            this.requestPeerMapFromServer();
         }
         if(this.peerMap.get(username) != null) {
          targetPeer = this.peerMap.get(username);
@@ -168,7 +172,7 @@ public class ChatEngine {
         Peer targetPeer = this.peerMap.get(username);
         if(targetPeer == null) {
             // Peer details not available
-            this.updatePeerMap();
+            this.requestPeerMapFromServer();
         }
         if(this.peerMap.get(username) != null) {
          targetPeer = this.peerMap.get(username);
@@ -209,6 +213,31 @@ public class ChatEngine {
     }
 }
 
-   
+    
+    public void replacePeerMap(HashMap newPeerMap){
+        this.peerMap.clear();
+        this.peerMap = (HashMap < String, Peer >)newPeerMap.clone();
+    }
+    public HashMap getPeerMap(){
+        return peerMap;
+    }
+    public void popFromPeerMap(String username){
+        peerMap.remove(username);
+    }
+    
+    public long getUptodatePeerTIMESTAMP(){
+        return uptodatePeer.getTIMESTAMP();
+    }
+    public long getMyTIMESTAMP(){
+        return user.getTIMESTAMP();
+    }
+    
+    public Peer getPeerByUsername(String username){
+        return peerMap.get(username);
+    }
+    
+    public void setUptodatePeer(Peer newUptodatePeer){
+        uptodatePeer = newUptodatePeer;
+    }
  
 }
