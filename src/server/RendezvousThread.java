@@ -23,10 +23,16 @@ public class RendezvousThread extends Thread {
 
     public Socket csock;
     public HashMap<String, Peer> peerMap;
+    private ObjectOutputStream out;
 
     public RendezvousThread(Socket csock, HashMap<String, Peer> peerMap) {
         this.csock = csock;
         this.peerMap = peerMap;
+        try {
+            out = new ObjectOutputStream(csock.getOutputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(RendezvousThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void run(){
@@ -38,6 +44,7 @@ public class RendezvousThread extends Thread {
             // Respond to the query
             respondToQuery(query);
             // Close the socket
+            out.close();
             csock.close();
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(RendezvousThread.class.getName()).log(Level.SEVERE, null, ex);
@@ -65,7 +72,11 @@ public class RendezvousThread extends Thread {
             case "ALL": {
                 try {
                     // Send the peerMap
-                    new ObjectOutputStream(this.csock.getOutputStream()).writeObject(this.peerMap);
+                    out.writeObject(this.peerMap);
+                    out.flush();
+                    //Send TIMESTAMP
+                    out.writeLong(System.currentTimeMillis());
+                    out.flush();
                 } catch (IOException ex) {
                     Logger.getLogger(RendezvousThread.class.getName()).log(Level.SEVERE, null, ex);
                 }

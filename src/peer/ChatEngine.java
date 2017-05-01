@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import peer.engine.text.TextEngine;
 import peer.engine.file.FileEngine;
+import peer.engine.request.RequestEngine;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -30,14 +31,19 @@ import java.util.logging.Logger;
 public class ChatEngine {
 
     Peer user;
+    long TIMESTAMP; // of last access to Rendezvous Server
     HashMap<String, Peer> peerMap;
     TextEngine tEngine;
     FileEngine fEngine;
-
+    RequestEngine rEngine;
+    
     public ChatEngine(String username) {
+        TIMESTAMP = (long)0.00;
         peerMap = new HashMap<String, Peer>();
         tEngine = new TextEngine();
         fEngine = new FileEngine();
+        rEngine = new RequestEngine(this);
+        
         tEngine.start();
         fEngine.start();
         // Create an new Peer and assign it to ChatEngine object
@@ -79,11 +85,17 @@ public class ChatEngine {
 
     public void updatePeerMap() {
         try {
+            
             Socket sock = new Socket(Constants.RENDEZOUS_SERVER_ADDRESS, Constants.RENDEZOUS_SERVER_PORT);
+            ObjectOutputStream t_out = new ObjectOutputStream(sock.getOutputStream());
+            ObjectInputStream t_in   = new ObjectInputStream(sock.getInputStream());
             // Send query
-            new ObjectOutputStream(sock.getOutputStream()).writeObject(new Query("ALL", this.user));
+            t_out.writeObject(new Query("ALL", this.user));
+            t_out.flush();
             // Receive response
-            HashMap<String, Peer> recvMap = (HashMap<String, Peer>) new ObjectInputStream(sock.getInputStream()).readObject();
+            HashMap<String, Peer> recvMap = (HashMap<String, Peer>)t_in.readObject();
+            TIMESTAMP =(long)t_in.readLong();
+            
             System.err.println("Abpout to print recieved map");
             printMap(recvMap);
             // Update the current map
@@ -92,6 +104,8 @@ public class ChatEngine {
             this.peerMap = (HashMap)recvMap.clone();
             System.err.println("printing updated map");
             printMap(this.peerMap);
+            t_out.close();
+            t_in.close();
             sock.close();
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(ChatEngine.class.getName()).log(Level.SEVERE, null, ex);
