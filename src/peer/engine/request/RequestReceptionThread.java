@@ -108,7 +108,7 @@ public class RequestReceptionThread extends Thread{
             case "REQUEST_PEERMAP":{
                                         out.writeObject(CE.getMessagePacket("PEERMAP"));
                                         out.flush();
-                                        out.writeObject(CE.getPeerMap());
+                                        out.writeObject(new ReliableData("PEERMAP",CE.getPeerMap()));
                                         out.flush();
                                    }
             case "DEL":           {

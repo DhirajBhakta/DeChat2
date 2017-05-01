@@ -50,6 +50,7 @@ public class ChatEngine {
         
         tEngine.start();
         fEngine.start();
+        rEngine.start();
         // Create an new Peer and assign it to ChatEngine object
         this.user = new Peer(this.getSystemInetAddress(), username);
         // Get other peer details from server
@@ -87,9 +88,8 @@ public class ChatEngine {
         return ip;
     }
 
-    /*
-    update from RENDEZVOUS SERVER
-    */
+    
+    //update from RENDEZVOUS SERVER
     public void requestPeerMapFromServer() {
         try {
             
@@ -117,6 +117,30 @@ public class ChatEngine {
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(ChatEngine.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    
+    //Generic internal method to send to all peers in peerMap
+    public void _sendToAll(Message requestMsg){
+        Iterator it = peerMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            Peer tempDestPeer = (Peer)pair.getValue();
+            rEngine.sendRequest(tempDestPeer,requestMsg);
+            }
+    }
+    
+    public void requestTIMESTAMPFromAll(){
+     //Send msg "REQUEST_TIMESTAMP" to every peer in the peerMap
+        _sendToAll(getMessagePacket("REQUEST_TIMESTAMP"));    
+    }
+    public void requestPeerMapFromBestPeer(){
+     //assumes 'requestTIMESTAMPFromAll' has been already called 10 seconds ago
+     rEngine.sendRequest(uptodatePeer,getMessagePacket("REQUEST_PEERMAP"));
+    }
+    public void requestDelete(){
+     //send msg "DEL" to evry peer in the peerMap  
+        _sendToAll(getMessagePacket("DEL"));
     }
     
     public Boolean sendMsg(String username, String msg) {

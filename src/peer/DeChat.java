@@ -6,6 +6,8 @@
 package peer;
 
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import server.RendezousServer;
 /**
  *
@@ -62,6 +64,21 @@ class InputListener extends Thread{
               username   = list[1];
               pathToFile = list[2];
               CE.sendFile(username, pathToFile);
+          }
+          else if(list[0].equals("UPDATE"))
+          {
+              new Thread(){
+                  public void run(){
+                      CE.requestTIMESTAMPFromAll();
+                      try {
+                          Thread.sleep(10000);
+                      } catch (InterruptedException ex) {
+                          Logger.getLogger(InputListener.class.getName()).log(Level.SEVERE, null, ex);
+                      }
+                      CE.requestPeerMapFromBestPeer();
+                      
+                  }
+              }.start();
           }
           else
           {
